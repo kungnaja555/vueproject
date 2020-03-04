@@ -1,0 +1,12 @@
+#app,body {
+    font-family: 'Prompt', sans-serif;
+}
+
+
+
+.button-add{
+    bottom: 0; 
+    right: 0; 
+    position: fixed; 
+    margin: 0 10% 50px 0;
+}
