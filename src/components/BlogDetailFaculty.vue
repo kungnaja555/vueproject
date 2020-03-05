@@ -6,7 +6,7 @@
           <v-card-title>{{form.title}} - {{form.name}}</v-card-title>
           <v-card-text>
             <p>รหัส : {{form.id}}</p>
-            <p>จำนวนบบัณฑิต : 500 คน</p>
+            <p>จำนวนบบัณฑิต : {{form.num}} คน</p>
           </v-card-text>
         </v-col>
         <v-col cols="1" v-if="$route.name == 'faculty'">
@@ -30,7 +30,8 @@
         </v-col>
         <v-col cols="1" v-if="$route.name == 'time'">
           <div class="text-center mt-4">
-            <div class="my-2">3 s</div>
+            <div class="my-2" v-if="status == 1">{{fac_time}} s</div>
+            <div class="my-2" v-if="status == 0">กำลังประมวลผล</div>
           </div>
         </v-col>
       </v-row>
@@ -43,7 +44,7 @@
 
       <v-expand-transition>
         <div v-show="show">
-          <div v-for="major in form.major" :key="major.id">
+          <div v-for="(major,index) in form.major" :key="major._id">
             <v-divider></v-divider>
 
             <v-row no-gutters>
@@ -51,7 +52,7 @@
                 <v-card-title>{{major.title}} - {{major.name}}</v-card-title>
                 <v-card-text>
                   <p>รหัส : {{major.id}}</p>
-                  <p>จำนวนบบัณฑิต : 150 คน</p>
+                  <p>จำนวนบบัณฑิต : {{major.num}} คน</p>
                 </v-card-text>
               </v-col>
               <v-col cols="1" v-if="$route.name == 'faculty'">
@@ -70,7 +71,7 @@
               </v-col>
               <v-col cols="1" v-if="$route.name == 'time'">
                 <div class="text-center mt-4">
-                  <div class="my-2">2 s</div>
+                  <div class="my-2" v-if="status == 1">{{time[index]}} s</div>
                 </div>
               </v-col>
             </v-row>
@@ -90,7 +91,10 @@ export default {
     };
   },
   props: {
-    form: Object
+    form: Object,
+    status: Number,
+    fac_time: Number,
+    time: Array
   }
 };
 </script>

@@ -32,13 +32,22 @@ const time = {
                     }
                 )
         },
-        getallfaculty({ commit }) {
-            axios.get(api.port + "faculty/getallfaculty")
+        getforselect({ commit }) {
+            axios.get(api.port + "faculty/getforselect")
                 .then(
                     (data) => {
                         commit('setfaculty', data.data)
                     }
                 )
+        },
+        addqueue({ commit }, payout) {
+            axios.post(api.port + "queue/addqueue/" + payout.id, {
+                faculty: payout.faculty
+            }).then(
+                (data) => {
+                    commit('setqueue', data.data)
+                }
+            )
         }
     }
 }
