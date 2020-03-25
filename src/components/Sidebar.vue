@@ -22,7 +22,8 @@ export default {
       items: [
         { title: "การซ้อม", icon: "mdi-view-dashboard", name: "rehearsal" },
         { title: "บัณฑิต", icon: "mdi-image", name: "pundit" },
-        { title: "คณะ", icon: "mdi-help-box", name: "faculty" }
+        { title: "คณะ", icon: "mdi-help-box", name: "faculty" },
+        { title: "เวลา", icon: "mdi-help-box", name: "time" },
       ]
     };
   },

@@ -4,51 +4,66 @@ import api from '../../config/api'
 const time = {
     namespaced: true,
     state: {
-        queues: null,
-        facultys: null
+        timestamps: null,
+
     },
     mutations: {
-        setqueue(state, data) {
-            state.queues = data
-        },
-        setfaculty(state, data) {
-            state.facultys = data
+        settimestamps(state, data) {
+            state.timestamps = data
         }
     },
     getters: {
-        queues: (state) => {
-            return state.queues
-        },
-        facultys: (state) => {
-            return state.facultys
-        }
     },
     actions: {
-        getallqueue({ commit }, id) {
-            axios.get(api.port + "queue/getallqueue/" + id)
+        gettimestamps({ commit }, payout) {
+            axios.get(api.port + "timestamp/gettimestamps/" + payout.start + "/" + payout.end)
                 .then(
                     (data) => {
-                        commit('setqueue', data.data)
+                        commit('settimestamps', data.data)
                     }
                 )
         },
-        getforselect({ commit }) {
-            axios.get(api.port + "faculty/getforselect")
-                .then(
-                    (data) => {
-                        commit('setfaculty', data.data)
-                    }
-                )
-        },
-        addqueue({ commit }, payout) {
-            axios.post(api.port + "queue/addqueue/" + payout.id, {
-                faculty: payout.faculty
+        updatetimestamp({ commit }, payout) {
+            axios.post(api.port + "timestamp/updatetimestamp", {
+                start: payout.start,
+                end: payout.end,
+                id: payout.form.id,
+                faculty: payout.form.faculty,
+                major: payout.form.major
             }).then(
                 (data) => {
-                    commit('setqueue', data.data)
+                    commit('settimestamps', data.data)
+                }
+            )
+        },
+
+        deletetimestamp({ commit }, payout) {
+            axios.post(api.port + "timestamp/deletetimestamp", {
+                start: payout.start,
+                end: payout.end,
+                id: payout.form.id,
+            }).then(
+                (data) => {
+                    commit('settimestamps', data.data)
+                }
+            )
+        },
+
+        updatetimemany({ commit }, payout) {
+            axios.post(api.port + 'timestamp/updatemanytimestamp', {
+                start: payout.start,
+                end: payout.end,
+                datestart: payout.form.datestart,
+                dateend: payout.form.dateend,
+                faculty: payout.form.faculty,
+                major: payout.form.major
+            }).then(
+                (data) => {
+                    commit('settimestamps', data.data)
                 }
             )
         }
+
     }
 }
 

@@ -10,26 +10,31 @@
       <v-card>
         <v-card-title class="headline grey lighten-2" primary-title></v-card-title>
 
-        <v-card-text v-if="$route.name=='rehearsal'">
+        <v-card-text>
           <v-form v-model="formstatus">
-            <v-text-field label="ชื่อ" :rules="[v => !!v || 'กรุณากรอกข้อมูล']" v-model="form.name"></v-text-field>
             <v-text-field
-              label="ปีการศึกษา"
               type="Number"
+              label="ชุดที่"
               :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
-              v-model="form.years"
+              v-model="form.no"
             ></v-text-field>
-          </v-form>
-        </v-card-text>
-
-        <v-card-text v-else>
-          <v-form v-model="formstatus">
-            <v-text-field
-              label="ชื่อย่อ"
+            <v-select
+              v-model="form.faculty"
+              :items="facultys"
+              item-text="name"
+              item-value="_id"
               :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
-              v-model="form.id"
-            ></v-text-field>
-            <v-text-field label="ชื่อ" :rules="[v => !!v || 'กรุณากรอกข้อมูล']" v-model="form.name"></v-text-field>
+              label="คณะ"
+              @change="getmajor"
+            ></v-select>
+            <!-- <v-select
+              v-model="form.major"
+              :items="majors"
+              item-text="name"
+              item-value="_id"
+              :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
+              label="สาขา"
+            ></v-select> -->
           </v-form>
         </v-card-text>
 
@@ -47,14 +52,22 @@
 
 <script>
 export default {
-  name: "dialog-faculty",
+  name: "dialog-list-rehearsal",
   data() {
-    return {};
+    return {
+      majors: ""
+    };
   },
   props: {
     form: Object,
     dialog: Boolean,
-    formstatus: Boolean
+    formstatus: Boolean,
+    facultys: Array,
+  },
+  methods: {
+    getmajor(faculty) {
+        console.log(this.facultys.indexOf(faculty));
+    }
   }
 };
 </script>
