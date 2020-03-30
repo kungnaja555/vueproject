@@ -14,21 +14,22 @@ const faculty = {
     getters: {
     },
     actions: {
-        getallset({ commit }) {
-            axios.get(api.port + 'set/getallset')
+        getallset({ commit }, payout) {
+            axios.get(api.port + 'set/getallset/' + payout)
                 .then((data) => commit('setsets', data.data))
         },
         addset({ commit }, payout) {
-            axios.post(api.port + 'set/addset', {
-                id: payout.id,
-                name: payout.name
+            axios.post(api.port + 'set/addset/' + payout.id, {
+                no: payout.form.no,
+                faculty: payout.form.faculty,
+                major: payout.form.major
             }).then((data) => commit('setsets', data.data))
         },
         deleteset({ commit }, payout) {
             axios.get(api.port + 'set/deleteset/' + payout)
                 .then((data) => commit('setsets', data.data))
         },
-        editset({ commit }, payout) {            
+        editset({ commit }, payout) {
             axios.post(api.port + 'set/editset/' + payout._id, {
                 id: payout.id,
                 name: payout.name

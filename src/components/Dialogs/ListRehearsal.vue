@@ -11,7 +11,7 @@
         <v-card-title class="headline grey lighten-2" primary-title></v-card-title>
 
         <v-card-text>
-          <v-form v-model="formstatus">
+          <v-form v-model="formStatus">
             <v-text-field
               type="Number"
               label="ชุดที่"
@@ -25,16 +25,16 @@
               item-value="_id"
               :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
               label="คณะ"
-              @change="getmajor"
+              @change="getmajor(form.faculty)"
             ></v-select>
-            <!-- <v-select
+            <v-select
               v-model="form.major"
               :items="majors"
               item-text="name"
               item-value="_id"
               :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
               label="สาขา"
-            ></v-select> -->
+            ></v-select>
           </v-form>
         </v-card-text>
 
@@ -42,7 +42,7 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="$emit('submit',form,formstatus)">ยืนยัน</v-btn>
+          <v-btn color="primary" text @click="$emit('submit',form,formStatus)">ยืนยัน</v-btn>
           <v-btn color="primary" text @click="$emit('close')">ยกเลิก</v-btn>
         </v-card-actions>
       </v-card>
@@ -55,18 +55,21 @@ export default {
   name: "dialog-list-rehearsal",
   data() {
     return {
-      majors: ""
     };
   },
   props: {
     form: Object,
     dialog: Boolean,
-    formstatus: Boolean,
+    formStatus: Boolean,
     facultys: Array,
+    majors: Array
   },
   methods: {
-    getmajor(faculty) {
-        console.log(this.facultys.indexOf(faculty));
+    getmajor(fac) {
+      var faculty = this.facultys.find(function(x){
+        if(x._id == fac) return x
+      })      
+      this.majors = faculty.major
     }
   }
 };

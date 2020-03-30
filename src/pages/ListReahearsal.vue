@@ -5,20 +5,25 @@
     </v-tabs>
     <div style="margin-top:15px"></div>
     <v-card v-if="tab==0" flat>
+      <div v-for="set in sets" :key="set._id">
+        <card-list-rehearsal :form="set" :tab="tab" @edit="edit" @del="del" />
+      </div>
       <dialog-list-rehearsal
         :dialog="dialog"
         :form="form"
-        :formstatus="formstatus"
+        :formStatus="formStatus"
         :facultys="facultys"
+        :majors="majors"
         @submit="submit"
         @close="close"
       />
     </v-card>
     <v-card v-if="tab==1" flat>
-      <v-card class="mx-auto m-4" width="50%" @click="$router.push({name: 'storagetimefac'})">
+      <!-- <v-card class="mx-auto m-4" width="50%" @click="$router.push({name: 'storagetimefac'})">
         <v-card-text style="font-size: 18px">IF - วิทยาการสารสนเทศ</v-card-text>
         <v-card-text>เวลาเฉลี่ย 1.52 วินาที</v-card-text>
-      </v-card>
+      </v-card>-->
+      <card-list-rehearsal :form="set" :tab="tab" />
     </v-card>
     <!-- <v-card class="time-menu">
       <div style="margin: 15px">
@@ -41,7 +46,7 @@ export default {
       items: ["ชุด", "คณะ"],
       dialog: false,
       dialogStatus: 0,
-      formstatus: false,
+      formStatus: false,
       form: {
         _id: "",
         no: "",
@@ -59,13 +64,13 @@ export default {
     };
   },
   methods: {
-    edit(fac) {
+    edit(item) {
       this.dialogStatus = 1;
-      this.form = Object.assign({}, fac);
+      this.form = Object.assign({}, item);
       this.dialog = true;
     },
-    del(fac) {
-      var id = fac._id;
+    del(item) {
+      var id = item._id;
       this.$store.dispatch("set/deleteset", id);
     },
     close() {
@@ -74,27 +79,33 @@ export default {
       this.dialog = false;
     },
     submit(form, status) {
+      var payout = {
+        id: this.$route.params.id,
+        form: form
+      };
       if (this.dialogStatus == 0 && status) {
-        this.$store.dispatch("set/addset", form);
+        this.$store.dispatch("set/addset", payout);
       } else if (this.dialogStatus == 1 && status) {
-        this.$store.dispatch("set/editset", form);
+        this.$store.dispatch("set/editset", payout);
       }
       this.close();
-    },
-    getmajor(fac_id){
-      this.$store.dispatch("major/getallmajor",fac_id);      
     }
   },
   created() {
     this.$store.dispatch("faculty/getforselect");
+    this.$store.dispatch("major/getForSelect");
+    this.$store.dispatch("set/getallset", this.$route.params.id);
   },
   computed: {
     ...mapState("faculty", {
       facultys: "facultys"
     }),
+    ...mapState("set", {
+      sets: "sets"
+    }),
     ...mapState("major", {
       majors: "majors"
-    })
+    }),
   }
 };
 </script>

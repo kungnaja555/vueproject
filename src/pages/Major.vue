@@ -6,7 +6,7 @@
     <dialog-faculty
       :dialog="dialog"
       :form="form"
-      :formstatus="formstatus"
+      :formStatus="formStatus"
       @submit="submit"
       @close="close"
     />
@@ -20,13 +20,13 @@ export default {
     return {
       dialog: false,
       dialogStatus: 0,
-      formstatus: false,
+      formStatus: false,
       form: {
         _id: "",
         id: "",
         name: ""
       },
-      defaultform: {
+      defaultForm: {
         _id: "",
         id: "",
         name: ""
@@ -48,7 +48,7 @@ export default {
     },
     close() {
       this.dialogStatus = 0;
-      this.form = Object.assign({}, this.defaultform);
+      this.form = Object.assign({}, this.defaultForm);
       this.dialog = false;
     },
     submit(form, status) {

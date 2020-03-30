@@ -33,6 +33,10 @@ const major = {
                 id: payout.form.id,
                 name: payout.form.name
             }).then((data) => commit('setmajors', data.data))
+        },
+        getForSelect({ commit }) {
+            axios.get(api.port + 'major/getforselect')
+                .then((data) => commit('setmajors', data.data))
         }
     },
 

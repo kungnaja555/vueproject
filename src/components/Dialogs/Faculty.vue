@@ -11,7 +11,7 @@
         <v-card-title class="headline grey lighten-2" primary-title></v-card-title>
 
         <v-card-text v-if="$route.name=='rehearsal'">
-          <v-form v-model="formstatus">
+          <v-form v-model="formStatus">
             <v-text-field label="ชื่อ" :rules="[v => !!v || 'กรุณากรอกข้อมูล']" v-model="form.name"></v-text-field>
             <v-text-field
               label="ปีการศึกษา"
@@ -23,7 +23,7 @@
         </v-card-text>
 
         <v-card-text v-else>
-          <v-form v-model="formstatus">
+          <v-form v-model="formStatus">
             <v-text-field
               label="ชื่อย่อ"
               :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
@@ -37,7 +37,7 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="$emit('submit',form,formstatus)">ยืนยัน</v-btn>
+          <v-btn color="primary" text @click="$emit('submit',form,formStatus)">ยืนยัน</v-btn>
           <v-btn color="primary" text @click="$emit('close')">ยกเลิก</v-btn>
         </v-card-actions>
       </v-card>
@@ -54,7 +54,7 @@ export default {
   props: {
     form: Object,
     dialog: Boolean,
-    formstatus: Boolean
+    formStatus: Boolean
   }
 };
 </script>
