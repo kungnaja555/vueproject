@@ -1,15 +1,17 @@
 <template>
-  <v-navigation-drawer app clipped>
+  <v-navigation-drawer v-model="drawer" app clipped>
     <v-list dense nav>
-      <v-list-item v-for="item in items" :key="item.title" link>
-        <v-list-item-icon>
-          <v-icon>{{ item.icon }}</v-icon>
-        </v-list-item-icon>
+      <div v-for="item in items" :key="item.title">
+        <v-list-item @click="setRoute(item.name)" link>
+          <v-list-item-icon>
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-list-item-icon>
 
-        <v-list-item-content>
-          <v-list-item-title @click="setroute(item.name)">{{ item.title }}</v-list-item-title>
-        </v-list-item-content>
-      </v-list-item>
+          <v-list-item-content>
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </div>
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -20,19 +22,22 @@ export default {
   data() {
     return {
       items: [
-        { title: "การซ้อม", icon: "mdi-view-dashboard", name: "rehearsal" },
-        { title: "บัณฑิต", icon: "mdi-image", name: "pundit" },
-        { title: "คณะ", icon: "mdi-help-box", name: "faculty" },
-        { title: "เวลา", icon: "mdi-help-box", name: "time" },
+        { title: "การซ้อม", icon: "directions_walk", name: "rehearsal" },
+        { title: "คณะ", icon: "business", name: "faculty" },
+        // { title: "เวลา", icon: "access_time", name: "time" },
+        { title: "จับเวลา", icon: "access_alarm", name: "start" }
       ]
     };
   },
   methods: {
-    setroute(route) {
-      if(this.$route.name != route) {
-        this.$router.push({ name: route })
-      }  
+    setRoute(route) {
+      if (this.$route.name != route) {
+        this.$router.push({ name: route });
+      }
     }
+  },
+  props: {
+    drawer: Boolean
   }
 };
 </script>

@@ -5,8 +5,8 @@ import rehearsal from './modules/rehearsal'
 import time from './modules/time'
 import redis from './modules/redis'
 import faculty from './modules/faculty'
-import major from './modules/major'
 import set from './modules/set'
+import pundit from './modules/pundit'
 
 Vue.use(Vuex)
 
@@ -16,7 +16,7 @@ export default new Vuex.Store({
     time,
     redis,
     faculty,
-    major,
-    set
+    set,
+    pundit
   }
 })

@@ -13,26 +13,18 @@
           primary-title
         >{{dialogTitle==0?'เพิ่มข้อมูล':'แก้ไขข้อมูล'}}</v-card-title>
 
-        <v-card-text v-if="$route.name=='rehearsal'">
-          <v-text-field label="ชื่อ" v-model="form.name"></v-text-field>
-          <v-text-field label="ปีการศึกษา" type="Number" v-model="form.years"></v-text-field>
-          <v-text-field
-            label="ปีการศึกษา"
-            type="date"
-            v-model="form.date"
-          ></v-text-field>
-        </v-card-text>
-
-        <v-card-text v-else>
-          <v-text-field label="ชื่อย่อ" v-model="form.id"></v-text-field>
-          <v-text-field label="ชื่อ" v-model="form.name"></v-text-field>
+        <v-card-text>
+          <v-form v-model="formStatus">
+            <v-text-field v-model="set.name" label="ชุดที่" type="Number"></v-text-field>
+            <v-text-field v-model="set.years" label="ปีการศึกษา" type="Number"></v-text-field>
+          </v-form>
         </v-card-text>
 
         <v-divider></v-divider>
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="$emit('submit',form)">ยืนยัน</v-btn>
+          <v-btn color="primary" text @click="$emit('submit',set)">ยืนยัน</v-btn>
           <v-btn color="primary" text @click="$emit('close')">ยกเลิก</v-btn>
         </v-card-actions>
       </v-card>
@@ -42,15 +34,18 @@
 
 <script>
 export default {
-  name: "dialog-faculty",
+  name: "dialog-set",
   data() {
-    return {};
+    return {
+      formStatus: false
+    };
   },
   props: {
-    form: Object,
+    set: Object,
     dialog: Boolean,
-    dialogTitle: Number
-  }
+    dialogTitle: Number,
+  },
+  
 };
 </script>
 

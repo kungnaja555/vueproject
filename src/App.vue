@@ -1,8 +1,9 @@
 <template>
   <v-app>
-    <sidebar />
+    <sidebar :drawer="drawer"/>
 
     <v-app-bar app clipped-left>
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
     </v-app-bar>
 
     <v-content>
@@ -14,6 +15,11 @@
 </template>
 
 <script>
-
-export default {};
+export default {
+  data() {
+    return {
+      drawer: false
+    };
+  }
+};
 </script>

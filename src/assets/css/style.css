@@ -21,3 +21,48 @@ body {
     position: fixed; 
     margin: 80px 15px 0 0;
 }
+
+.width-table {
+    width: 50%;
+}
+
+.width-search-table {
+    width: 50%;
+    margin-left: 10px;
+}
+
+.width-table-pundit {
+    width: 55%;
+}
+
+.width-search-table-pundit {
+    width: 35%;
+    margin-left: 10px;
+}
+
+.width-card-list-rehearsal {
+    width: 40%;
+}
+
+@media only screen and (max-width: 768px) {
+    /* For desktop: */
+    .width-table {
+        width: 100%;
+    }
+
+    .width-search-table {
+        width: 95%;
+    }
+
+    .width-table-pundit {
+        width: 100%;
+    }
+
+    .width-search-table-pundit {
+        width: 95%;
+    }
+
+    .width-card-list-rehearsal {
+        width: 100%;
+    }
+}

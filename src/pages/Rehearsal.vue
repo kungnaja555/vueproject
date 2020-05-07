@@ -1,12 +1,13 @@
 <template>
   <div>
+    <div style="font-size:25px;">การซ้อม</div>
     <div v-for="rehearsal in rehearsals" :key="rehearsal._id">
-      <blog-detail-faculty :form="rehearsal" @edit="edit" @del="del" />
+      <card-rehearsal :form="rehearsal" @edit="edit" @del="del" />
     </div>
     <dialog-faculty
       :dialog="dialog"
       :form="form"
-      :formstatus="formstatus"
+      :dialogTitle="dialogTitle"
       @submit="submit"
       @close="close"
     />
@@ -19,46 +20,45 @@ export default {
   data() {
     return {
       dialog: false,
-      dialogStatus: 0,
-      formstatus: false,
+      dialogTitle: 0,
       form: {
-        _id: "",
         years: "",
-        name: ""
+        name: "",
+        date: ""
       },
       defaultform: {
-        _id: "",
         years: "",
-        name: ""
+        name: "",
+        date: ""
       }
     };
   },
   methods: {
-    edit(fac) {
-      this.dialogStatus = 1;
-      this.form = Object.assign({}, fac);
+    edit(re) {
+      this.dialogTitle = 1;
+      this.form = Object.assign({}, re);
       this.dialog = true;
     },
-    del(fac) {
-      var id = fac._id;
-      this.$store.dispatch("rehearsal/deleterehearsal", id);
+    del(re) {
+      var id = re._id;
+      this.$store.dispatch("rehearsal/deleteRehearsal", id);
     },
     close() {
-      this.dialogStatus = 0;
+      this.dialogTitle = 0;
       this.form = Object.assign({}, this.defaultform);
       this.dialog = false;
     },
-    submit(form, status) {
-      if (this.dialogStatus == 0 && status) {
-        this.$store.dispatch("rehearsal/addrehearsal", form);
-      } else if (this.dialogStatus == 1 && status) {
-        this.$store.dispatch("rehearsal/editrehearsal", form);
+    submit(form) {
+      if (this.dialogTitle == 0) {
+        this.$store.dispatch("rehearsal/addRehearsal", form);
+      } else if (this.dialogTitle == 1) {
+        this.$store.dispatch("rehearsal/editRehearsal", form);
       }
       this.close();
     }
   },
   created() {
-    this.$store.dispatch("rehearsal/getallrehearsal");
+    this.$store.dispatch("rehearsal/getAllRehearsal");
   },
   computed: {
     ...mapState("rehearsal", {

@@ -1,12 +1,25 @@
 <template>
   <div>
+    <div style="font-size:25px;">คณะ</div>
     <div v-for="fac in facultys" :key="fac._id">
-      <blog-detail-faculty :form="fac" @edit="edit" @del="del" />
+      <v-card class="mx-auto mt-4" width="40%">
+        <v-row>
+          <v-col>
+            <v-card-text style="font-size: 18px">{{fac.id}} - {{fac.name}}</v-card-text>
+          </v-col>
+          <v-col cols="3">
+            <v-icon class="mt-4 mr-2" @click="nextPage(fac)">visibility</v-icon>
+            <v-icon class="mt-4 mr-2" @click="edit(fac)">mdi-pencil</v-icon>
+            <v-icon class="mt-4" @click="del(fac)">mdi-delete</v-icon>
+          </v-col>
+        </v-row>
+      </v-card>
     </div>
+
     <dialog-faculty
       :dialog="dialog"
       :form="form"
-      :formStatus="formStatus"
+      :dialogTitle="dialogTitle"
       @submit="submit"
       @close="close"
     />
@@ -19,15 +32,13 @@ export default {
   data() {
     return {
       dialog: false,
-      dialogStatus: 0,
-      formStatus: false,
+      dialogTitle: 0,
+      search: "",
       form: {
-        _id: "",
         id: "",
         name: ""
       },
       defaultForm: {
-        _id: "",
         id: "",
         name: ""
       }
@@ -35,30 +46,34 @@ export default {
   },
   methods: {
     edit(fac) {
-      this.dialogStatus = 1;
+      this.dialogTitle = 1;
       this.form = Object.assign({}, fac);
       this.dialog = true;
     },
     del(fac) {
       var id = fac._id;
-      this.$store.dispatch("faculty/deletefaculty", id);
+      this.$store.dispatch("faculty/deleteFaculty", id);
     },
     close() {
-      this.dialogStatus = 0;
+      this.dialogTitle = 0;
       this.form = Object.assign({}, this.defaultForm);
       this.dialog = false;
     },
-    submit(form, status) {
-      if (this.dialogStatus == 0 && status) {
-        this.$store.dispatch("faculty/addfaculty", form);
-      } else if (this.dialogStatus == 1 && status) {
-        this.$store.dispatch("faculty/editfaculty", form);
+    submit(form) {
+      if (this.dialogTitle == 0) {
+        this.$store.dispatch("faculty/addFaculty", form);
+      } else if (this.dialogTitle == 1) {
+        this.$store.dispatch("faculty/editFaculty", form);
       }
       this.close();
+    },
+    nextPage(fac) {
+      var fac_id = fac._id;
+      this.$router.push(`/set/${fac_id}`);
     }
   },
   created() {
-    this.$store.dispatch("faculty/getallfaculty");
+    this.$store.dispatch("faculty/getAllFaculty");
   },
   computed: {
     ...mapState("faculty", {

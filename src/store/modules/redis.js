@@ -5,35 +5,46 @@ const redis = {
     namespaced: true,
     state: {
         state: null,
-        img: null
+        img: null,
+        avg: 0
     },
     mutations: {
-        setstate(state, data) {
+        setState(state, data) {
             state.state = data
         },
-        setimage(state, data) {
-            state.img = data
+        setImage(state, data) {
+            state.img = api.port + "image/img" + data + ".jpg"
+        },
+        setAvg(state, data) {
+            state.avg = data
         }
     },
     getters: {
     },
     actions: {
-        getstate({ commit }) {
+        getState({ commit }) {
             axios.get(api.port + 'redis/getstate')
-                .then((data) => commit('setstate', data.data))
+                .then((data) => commit('setState', data.data))
         },
-        setstate({ commit }, payout) {
+        setState({ commit }, payout) {
             axios.post(api.port + 'redis/setstate', {
                 state: payout.state,
                 x: payout.position.x,
                 y: payout.position.y,
                 w: payout.position.w,
                 h: payout.position.h,
-            }).then((data) => commit('setstate', data.data))
+            }).then((data) => commit('setState', data.data))
         },
-        getimage({ commit }) {
-            axios.get(api.port + 'redis/getimage')
-                .then((data) => commit('setimage', data.data))
+        getCount({ commit }) {
+            axios.get(api.port + 'redis/getcount')
+                .then((data) => commit('setImage', data.data))
+
+        },
+        getAvg({ commit }) {
+            setInterval(() => {
+                axios.get(api.port + 'redis/getavg')
+                    .then((data) => commit('setAvg', data.data))
+            }, 1000);
         }
     }
 }

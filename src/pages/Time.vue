@@ -1,273 +1,183 @@
 <template>
   <div>
-    <div style="width:80%">
-      <div>
-        <v-form ref="formTime" v-model="validtime" lazy-validation>
-          <v-row>
-            <v-col></v-col>
-            <v-col></v-col>
-            <v-col></v-col>
-            <v-col cols="1">
-              <div>ตั้งแต่</div>
-            </v-col>
-            <v-col>
-              <v-text-field
-                type="datetime-local"
-                label="วันที่"
-                v-model="datestart"
-                :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="1">
-              <div>ถึง</div>
-            </v-col>
-            <v-col>
-              <v-text-field
-                type="datetime-local"
-                label="วันที่"
-                v-model="dateend"
-                :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
-              ></v-text-field>
-            </v-col>
-            <v-col>
-              <v-btn
-                color="primary"
-                class="mt-3"
-                width="100%"
-                @click="$refs.formTime.validate()"
-              >ค้นหา</v-btn>
-              <!-- <v-btn color="primary" class="mt-3" @click="search">ค้นหา</v-btn> -->
-            </v-col>
-          </v-row>
-        </v-form>
-      </div>
-      <div>
-        <v-data-table
-          :headers="headers"
-          :items="desserts"
-          class="mx-auto elevation-1"
-          style="width:50%"
-          hide-default-footer
-          :page.sync="page"
-          :items-per-page="itemsPerPage"
-          @page-count="pageCount = $event"
-        >
-          <template
-            v-slot:item.no="{ item }"
-          >{{ desserts.map(function(x) {return x.id; }).indexOf(item.id) + 1 }}</template>
+    <router-link
+      :to="`/rehearsalpundit/${this.$route.params.re_id}/${this.$route.params.fac_id}/${this.$route.params.set_id}`"
+    >ย้อนกลับ</router-link>
+    <div
+      style="font-size: 25px"
+    >{{rehearsal.name}} - ปีการศึกษา {{rehearsal.years}} / {{faculty.id}} - {{faculty.name}} / ชุดที่ {{set.no}}</div>
+    <v-row>
+      <v-col cols="6"></v-col>
+      <v-col>
+        <v-text-field v-model="datetime.start" label="ตั้งแต่" type="datetime-local"></v-text-field>
+      </v-col>
+      <v-col>
+        <v-text-field v-model="datetime.end" label="ถึง" type="datetime-local"></v-text-field>
+      </v-col>
+      <v-col>
+        <v-btn color="primary" class="mt-2" width="100%" @click="clickSearch">ค้นหา</v-btn>
+      </v-col>
+      <v-col>
+        <v-btn color="primary" class="mt-2" width="100%" @click.stop="dialog=true">นำเข้าเวลา</v-btn>
+        <v-dialog v-model="dialog" width="344">
+          <v-card>
+            <v-card-title class="headline grey lighten-2" primary-title>นำเข้าเวลา</v-card-title>
 
-          <template v-slot:item.actions="{  }">
-            <v-icon class="mr-2" small @click="dialog = true">done</v-icon>
-            <v-icon small>clear</v-icon>
-          </template>
-        </v-data-table>
-        <div class="text-center pt-2">
-          <v-pagination v-model="page" :length="pageCount"></v-pagination>
-        </div>
-      </div>
+            <v-card-text>
+              <v-text-field v-model="position.start" label="ตำแหน่งเริ่มต้น" type="Number"></v-text-field>
+            </v-card-text>
+            <v-card-text>
+              <v-text-field v-model="position.end" label="ตำแแหน่งสิ้นสุด" type="Number"></v-text-field>
+            </v-card-text>
 
-      <!-- <time-table :desserts="desserts" @getdessert="getdessert" /> -->
-    </div>
-    <v-card class="time-menu">
-      <v-container>
-        <div style="margin: 15px">เวลาเฉลี่ย 10 ล่าสุด: 3.00 วินาที</div>
-        <v-divider></v-divider>
-        <div style="margin: 15px">
-          <v-form ref="formMany" v-model="validmany" lazy-validation>
-            <v-row>
-              <v-col>
-                <v-text-field
-                  type="Number"
-                  label="ตั้งแต่"
-                  :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
-                ></v-text-field>
-              </v-col>
-              <v-col>
-                <v-text-field type="Number" label="ถึง" :rules="[v => !!v || 'กรุณากรอกข้อมูล']"></v-text-field>
-              </v-col>
-            </v-row>
-            <v-select
-              label="การซ้อม"
-              :items="['การซ้อมครั้งที่ 1']"
-              :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
-            ></v-select>
-            <v-select
-              type="Number"
-              label="ชุดที่"
-              :items="setItem"
-              :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
-            ></v-select>
-            <v-btn color="primary" width="100%" @click="$refs.formMany.validate()">จัดกลุ่ม</v-btn>
-          </v-form>
-        </div>
+            <v-divider></v-divider>
 
-        <div class="text-center">
-          <v-dialog v-model="dialog" width="344">
-            <v-card>
-              <v-card-title class="headline grey lighten-2" primary-title>เพิ่มข้อมูล</v-card-title>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="primary" text @click="importTimeMany">ยืนยัน</v-btn>
+              <v-btn color="primary" text @click="close">ยกเลิก</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </v-col>
+    </v-row>
+    <v-card class="mx-auto mt-4 width-table">
+      <v-data-table
+        :headers="headers"
+        :items="timestamps"
+        class="elevation-1"
+        hide-default-footer
+        :page.sync="page"
+        :items-per-page="itemsPerPage"
+        @page-count="pageCount = $event"
+      >
+        <template
+          v-slot:item.no="{ item }"
+        >{{ timestamps.map(function(x) {return x._id; }).indexOf(item._id) + 1 }}</template>
 
-              <v-card-text>
-                <v-form ref="formOne" v-model="validone" lazy-validation>
-                  <v-select
-                    label="การซ้อม"
-                    :items="['การซ้อมครั้งที่ 1']"
-                    :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
-                  ></v-select>
-                  <v-select
-                    type="Number"
-                    label="ชุดที่"
-                    :items="setItem"
-                    :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
-                  ></v-select>
-                  <v-btn color="primary" width="100%" @click="$refs.formOne.validate()">จัดกลุ่ม</v-btn>
-                </v-form>
-              </v-card-text>
+        <template
+          v-slot:item.time="{ item }"
+        >{{ new Date(item.time).toLocaleString("th-TH", {timeZone: "Asia/Bangkok"}) }}</template>
 
-              <v-divider></v-divider>
+        <template v-slot:item.actions="{ item }">
+          <v-icon class="mr-2" small @click="importTimeOne(item)">done</v-icon>
+          <v-icon small @click="deleteTime(item)">clear</v-icon>
+        </template>
 
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="primary" text @click="dialog = false">ตกลง</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-        </div>
-      </v-container>
+        <template v-slot:no-data>ไม่พบข้อมูล</template>
+      </v-data-table>
     </v-card>
+    <div class="text-center pt-2">
+      <v-pagination v-model="page" :length="pageCount"></v-pagination>
+    </div>
   </div>
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
   data() {
     return {
       page: 1,
       pageCount: 0,
       itemsPerPage: 30,
-      checkboxformone: true,
-      checkboxformmany: false,
-      setItem: [1, 2, 3],
       dialog: false,
+      datetime: {
+        start: "",
+        end: ""
+      },
+      defaultdatetime: {
+        start: "",
+        end: ""
+      },
+      position: {
+        start: "",
+        end: ""
+      },
+      defaultposition: {
+        start: "",
+        end: ""
+      },
       headers: [
-        { text: "ลำดับที่", value: "no" },
-        { text: "เวลา", value: "time" },
+        { text: "ลำดับที่", value: "no", sortable: false },
+        { text: "เวลา", value: "time", sortable: false },
         { text: "เมนู", value: "actions", sortable: false }
       ],
-      desserts: [
-        {
-          id: 1,
-          time: "12-3-2015 18:30:00"
-        },
-        {
-          id: 2,
-          time: "12-3-2015 18:30:02"
-        }
-      ]
+      interval: ""
     };
+  },
+  created() {
+    this.$store.dispatch("time/clearTimestamps");
+    var payout = {
+      re_id: this.$route.params.re_id,
+      fac_id: this.$route.params.fac_id,
+      set_id: this.$route.params.set_id
+    };
+    this.$store.dispatch("rehearsal/getRehearsal", payout.re_id);
+    this.$store.dispatch("set/getSet", payout);
+
+    this.getTimestamps(0, 0, 0);
+  },
+  computed: {
+    ...mapState("rehearsal", {
+      rehearsal: "rehearsal"
+    }),
+    ...mapState("faculty", {
+      faculty: "faculty"
+    }),
+    ...mapState("set", {
+      set: "set"
+    }),
+    ...mapState("time", {
+      timestamps: "timestamps"
+    })
+  },
+  methods: {
+    clickSearch() {
+      var start = this.datetime.start;
+      var end = this.datetime.end;
+      this.getTimestamps(1, start, end);
+      this.close();
+    },
+    getTimestamps(status, start, end) {
+      var payout = {
+        start: start,
+        end: end
+      };
+      if (status == 0) {
+        this.$store.dispatch("time/getAllTimes");
+      } else {
+        this.$store.dispatch("time/searchTime", payout);
+      }
+    },
+    importTimeMany() {
+      var payout = {
+        position: this.position,
+        set_id: this.$route.params.set_id,
+        re_id: this.$route.params.re_id
+      };
+      this.$store.dispatch("time/setTimeGroup", payout);
+      this.getTimestamps(0, 0, 0);
+      this.close();
+    },
+    importTimeOne(item) {
+      var payout = {
+        time_id: item._id,
+        set_id: this.$route.params.set_id,
+        re_id: this.$route.params.re_id
+      };
+      this.$store.dispatch("time/setOneTimeGroup", payout);
+    },
+    deleteTime(time) {
+      this.$store.dispatch("time/deleteTime", time._id);
+    },
+    close() {
+      this.datetime = Object.assign({}, this.defaultdatetime);
+      this.position = Object.assign({}, this.defaultposition);
+      this.dialog = false;
+    }
   }
 };
-// import { mapState, mapGetters } from "vuex";
-// export default {
-//   data() {
-//     return {
-//       datestart: null,
-//       dateend: null,
-//       indexstart: "",
-//       indexend: "",
-//       editform: {
-//         id: "",
-//         date: "",
-//         faculty: "",
-//         major: "",
-//         disabled: true
-//       },
-//       many: {
-//         datestart: "",
-//         dateend: "",
-//         faculty: "",
-//         major: "",
-//         disabled: true
-//       }
-//     };
-//   },
-//   methods: {
-//     search() {
-//       var date = {
-//         start: this.datestart,
-//         end: this.dateend
-//       };
-
-//       this.$store.dispatch("time/gettimestamps", date);
-//     },
-
-//     getdessert(item) {
-//       this.editform.id = item._id;
-//       this.editform.date = item.time;
-//       this.editform.faculty = item.faculty;
-//       this.editform.major = item.major;
-//     },
-
-//     getmajor(status) {
-//       if (status == 0) {
-//         this.editform.disabled = false;
-//         this.$store.dispatch("faculty/getfaculty", this.editform.faculty);
-//       } else {
-//         this.many.disabled = false;
-//         this.$store.dispatch("faculty/getfaculty", this.many.faculty);
-//       }
-//     },
-
-//     updatetime() {
-//       var data = {
-//         start: this.datestart,
-//         end: this.dateend,
-//         form: this.editform
-//       };
-//       this.$store.dispatch("time/updatetimestamp", data);
-//     },
-
-//     deletetime() {
-//       var data = {
-//         start: this.datestart,
-//         end: this.dateend,
-//         form: this.editform
-//       };
-//       this.$store.dispatch("time/deletetimestamp", data);
-//     },
-
-//     updatetimemany() {
-//       this.many.datestart = this.desserts[this.indexstart - 1].time;
-//       this.many.dateend = this.desserts[this.indexend - 1].time;
-//       var data = {
-//         start: this.datestart,
-//         end: this.dateend,
-//         form: this.many
-//       };
-//       this.$store.dispatch("time/deletetimestamp", data);
-//     },
-
-//     formattime(time) {
-//       return new Date(time).toLocaleString("th-TH", {
-//         timeZone: "Asia/Bangkok"
-//       });
-//     }
-//   },
-//   computed: {
-//     ...mapState("time", {
-//       desserts: "timestamps"
-//     }),
-
-//     ...mapGetters("time", {}),
-
-//     ...mapState("faculty", {
-//       facultys: "facultys",
-//       majors: "majors"
-//     })
-//   },
-//   created() {
-//     this.$store.dispatch("faculty/getallfaculty");
-//   }
-// };
 </script>
 
 <style>

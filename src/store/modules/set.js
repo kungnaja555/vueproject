@@ -4,37 +4,102 @@ import api from '../../config/api'
 const faculty = {
     namespaced: true,
     state: {
-        sets: null
+        sets: [],
+        set: '',
+        mysets: []
     },
     mutations: {
-        setsets(state, data) {
+        setSets(state, data) {
             state.sets = data
-        }
+        },
+        setSet(state, data) {
+            state.set = data
+        },
+        setMySets(state, data) {
+            state.mysets = data
+        },
     },
     getters: {
     },
     actions: {
-        getallset({ commit }, payout) {
+        getAllSet({ commit }, payout) {
             axios.get(api.port + 'set/getallset/' + payout)
-                .then((data) => commit('setsets', data.data))
+                .then((data) => commit('setSets', data.data))
         },
-        addset({ commit }, payout) {
-            axios.post(api.port + 'set/addset/' + payout.id, {
-                no: payout.form.no,
-                faculty: payout.form.faculty,
-                major: payout.form.major
-            }).then((data) => commit('setsets', data.data))
+        addSet({ commit }, payout) {
+            axios.post(api.port + 'set/addset/' + payout.fac_id, {
+                set: payout.set
+            }).then((data) => commit('setSets', data.data))
         },
-        deleteset({ commit }, payout) {
-            axios.get(api.port + 'set/deleteset/' + payout)
-                .then((data) => commit('setsets', data.data))
+        deleteSet({ commit }, payout) {
+            axios.get(api.port + 'set/deleteset/' + payout.fac_id + '/' + payout.set._id)
+                .then((data) => commit('setSets', data.data))
         },
-        editset({ commit }, payout) {
-            axios.post(api.port + 'set/editset/' + payout._id, {
-                id: payout.id,
-                name: payout.name
-            }).then((data) => commit('setsets', data.data))
-        }
+        getSet({ commit }, payout) {
+            axios.get(api.port + 'set/getset/' + payout.set_id)
+                .then((data) => commit('setSet', data.data))
+        },
+        editSet({ commit }, payout) {
+            axios.post(api.port + 'set/editset/' + payout.fac_id + '/' + payout.set._id, {
+                set: payout.set
+            }).then((data) => commit('setSets', data.data))
+        },
+        getSetsByFaculty({ commit }, payout) {
+            axios.get(api.port + 'set/getsetsbyfaculty/' + payout.re_id + '/' + payout.fac_id)
+                .then((data) => {
+                    commit('setSets', data.data.sets)
+                    commit('setMySets', data.data.mysets)
+                })
+        },
+        addAllContentInSet({ commit }, payout) {
+            axios.post(api.port + `set/addallcontentinset/${payout.re_id}/${payout.fac_id}`)
+                .then((data) => {
+                    commit('setSets', data.data.sets)
+                    commit('setMySets', data.data.mysets)
+                })
+        },
+        addSomeContentInSet({ commit }, payout) {
+            axios.post(api.port + `set/addsomecontentinset/${payout.re_id}/${payout.fac_id}`, {
+                form: payout.form
+            })
+                .then((data) => {
+                    commit('setSets', data.data.sets)
+                    commit('setMySets', data.data.mysets)
+                })
+        },
+        removeContentInSet({ commit }, payout) {
+            axios.get(api.port + `set/removecontentinset/${payout.re_id}/${payout.fac_id}/${payout.form._id}`)
+                .then((data) => {
+                    commit('setSets', data.data.sets)
+                    commit('setMySets', data.data.mysets)
+                })
+        },
+        addNewContentInSet({ commit }, payout) {
+            axios.post(api.port + `set/addnewcontentinset/${payout.re_id}/${payout.fac_id}`, {
+                form: payout.form
+            })
+                .then((data) => {
+                    commit('setSets', data.data.sets)
+                    commit('setMySets', data.data.mysets)
+                })
+        },
+        deleteNewContentInSet({ commit }, payout) {
+            axios.get(api.port + `set/deletenewcontentinset/${payout.re_id}/${payout.fac_id}/${payout.form._id}`)
+                .then((data) => {
+                    commit('setSets', data.data.sets)
+                    commit('setMySets', data.data.mysets)
+                })
+        },
+        editNewContentInSet({ commit }, payout) {
+            axios.post(api.port + `set/editnewcontentinset/${payout.re_id}/${payout.fac_id}/${payout.form._id}`, {
+                form: payout.form,
+                editname: payout.editname
+            })
+                .then((data) => {
+                    commit('setSets', data.data.sets)
+                    commit('setMySets', data.data.mysets)
+                })
+        },
     }
 }
 
