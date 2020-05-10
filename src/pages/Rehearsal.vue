@@ -1,6 +1,7 @@
 <template>
   <div>
     <div style="font-size:25px;">การซ้อม</div>
+    <v-btn class="button-add" width="100px" @click.stop="dialog = true" color="primary">+ เพิ่ม</v-btn>
     <div v-for="rehearsal in rehearsals" :key="rehearsal._id">
       <card-rehearsal :form="rehearsal" @edit="edit" @del="del" />
     </div>

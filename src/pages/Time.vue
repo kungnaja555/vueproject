@@ -35,7 +35,7 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="primary" text @click="importTimeMany">ยืนยัน</v-btn>
-              <v-btn color="primary" text @click="close">ยกเลิก</v-btn>
+              <v-btn color="error" text @click="close">ยกเลิก</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -51,6 +51,29 @@
         :items-per-page="itemsPerPage"
         @page-count="pageCount = $event"
       >
+        <template v-slot:top>
+          <v-toolbar flat color="white">
+            <v-spacer></v-spacer>
+            <v-btn color="primary" dark @click.stop="dialogClear = true">ล้างข้อมูลทั้งหมด</v-btn>
+
+            <v-dialog v-model="dialogClear" max-width="344">
+              <v-card>
+                <v-card-title>ล้างข้อมูลทั้งหมด ?</v-card-title>
+
+                <v-card-text>คุณแน่ใจที่จะลบข้อมูลเวลาทั้งหมดหรือไม่</v-card-text>
+
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+
+                  <v-btn color="primary" text @click="clearTime">ยืนยัน</v-btn>
+
+                  <v-btn color="error" text @click="dialogClear = false">ยกเลิก</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </v-toolbar>
+        </template>
+
         <template
           v-slot:item.no="{ item }"
         >{{ timestamps.map(function(x) {return x._id; }).indexOf(item._id) + 1 }}</template>
@@ -82,6 +105,7 @@ export default {
       pageCount: 0,
       itemsPerPage: 30,
       dialog: false,
+      dialogClear: false,
       datetime: {
         start: "",
         end: ""
@@ -175,6 +199,10 @@ export default {
       this.datetime = Object.assign({}, this.defaultdatetime);
       this.position = Object.assign({}, this.defaultposition);
       this.dialog = false;
+    },
+    clearTime() {
+      this.dialogClear = false;
+      this.$store.dispatch("time/clearTimeAll");
     }
   }
 };

@@ -15,22 +15,19 @@
       >
         <template v-slot:top>
           <v-toolbar flat color="white">
-              <v-text-field
-                v-model="pundits_search"
-                label="ค้นหา"
-                full-width="50%"
-              ></v-text-field>
+            <v-text-field v-model="pundits_search" label="ค้นหา" full-width="50%"></v-text-field>
             <v-spacer></v-spacer>
-            <v-btn color="primary" @click="clearPundit">ล้างทั้งหมด</v-btn>
+            <v-btn color="primary" @click.stop="dialog=true">เพิ่มข้อมูล</v-btn>
+            <dialog-pundit
+              :dialog="dialog"
+              :pundit="pundit"
+              :dialogTitle="dialogTitle"
+              @dataExcel="dataExcel"
+              @submit="submit"
+              @close="close"
+            />
           </v-toolbar>
         </template>
-        <!-- <template v-slot:top>
-          <v-text-field v-model="pundits_search" label="ค้นหา" class="width-search-table-pundit"></v-text-field>
-          <v-spacer></v-spacer>
-          <v-btn>ล้างทั้งหมด</v-btn>
-        </template>-->
-
-        <template v-slot:item.level="{ item }">{{item.level==1?'ปริญญาตรี':'ปริญญาโท'}}</template>
 
         <template v-slot:item.actions="{ item }">
           <v-icon class="mr-2" small @click="edit(item)">mdi-pencil</v-icon>
@@ -43,16 +40,6 @@
     <div class="text-center pt-2">
       <v-pagination v-model="pundits_page" :length="pundits_pageCount"></v-pagination>
     </div>
-
-    <dialog-pundit
-      :dialog="dialog"
-      :pundit="pundit"
-      :dialogTitle="dialogTitle"
-      :file="file"
-      @dataExcel="dataExcel"
-      @submit="submit"
-      @close="close"
-    />
   </div>
 </template>
 
@@ -111,12 +98,6 @@ export default {
       };
       this.$store.dispatch("pundit/deletePundit", payout);
     },
-    clearPundit() {
-      var payout = {
-        set_id: this.$route.params.set_id,
-      };
-      this.$store.dispatch("pundit/clearPunditBySet", payout);
-    },
     submit(item) {
       var payout = {
         set_id: this.$route.params.set_id,
@@ -139,12 +120,14 @@ export default {
       var content = set.contents.find(el => el.rehearsal == null);
       return `${fac.id} - ${fac.name} / ชุดที่ ${content.name} - ปีการศึกษา ${content.years}`;
     },
-    dataExcel(data) {
+    async dataExcel(data, checkbox) {
       var payout = {
         set_id: this.$route.params.set_id,
         data: data
       };
+      if (checkbox) await this.$store.dispatch("pundit/clearPunditBySet", payout);
       this.$store.dispatch("pundit/uploadFile", payout);
+      this.close();
     }
   },
   created() {

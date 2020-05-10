@@ -69,6 +69,10 @@ const time = {
                     .then((data) => commit('setAvg', data.data.amount))
             }, 1000);
         },
+        clearTimeAll({commit}){
+            axios.get(api.port + `time/cleartimeall`)
+            .then((data) => commit('setTimestamps', data.data))
+        },
         clearTimestamps({ commit, state }) {
             clearInterval(state.statusInterval)
             commit('setTimestamps', [])

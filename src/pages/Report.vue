@@ -50,14 +50,14 @@ export default {
     showTimeAvg(name, times) {
       var x = times.find(el => el._id == name._id);
 
-      if (x.time >= 0) return x.time + " วินาที";
-      return 0.0 + " วินาที";
+      if (x.time >= 0) return x.time + " วินาที / คน";
+      return 0.0 + " วินาที / คน";
     },
     showTimePerMinute(name, times) {
       var x = times.find(el => el._id == name._id);
 
-      if (x.minutePerPundit == undefined) return 0 + " คนต่อนาที";
-      return x.minutePerPundit + " คนต่อนาที";
+      if (x.minutePerPundit == undefined) return 0 + " คน / นาที";
+      return x.minutePerPundit + " คน / นาที";
     },
     allTimeAvg(times) {
       var sum = 0;
@@ -70,8 +70,8 @@ export default {
       }
       var avg = sum / parseFloat(count);
 
-      if (avg >= 0) return avg + " วินาที";
-      return 0.0 + " วินาที";
+      if (avg >= 0) return avg + " วินาที / คน";
+      return 0.0 + " วินาที / คน";
     },
     allTimePerMinute(times) {
       var sum = 0;
@@ -84,8 +84,8 @@ export default {
       }
       var avg = sum / parseFloat(count);
 
-      if (avg >= 0) return avg + " คนต่อนาที";
-      return 0.0 + " คนต่อนาที";
+      if (avg >= 0) return avg + " คน / นาที";
+      return 0.0 + " คน / นาที";
     }
   },
   created() {

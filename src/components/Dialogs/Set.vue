@@ -1,11 +1,5 @@
 <template>
   <div>
-    <v-fab-transition>
-      <v-btn fab x-large dark color="pink" class="button-add" @click.stop="dialog = true">
-        <v-icon>add</v-icon>
-      </v-btn>
-    </v-fab-transition>
-
     <v-dialog v-model="dialog" width="344">
       <v-card>
         <v-card-title
@@ -25,7 +19,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="primary" text @click="$emit('submit',set)">ยืนยัน</v-btn>
-          <v-btn color="primary" text @click="$emit('close')">ยกเลิก</v-btn>
+          <v-btn color="error" text @click="$emit('close')">ยกเลิก</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -43,9 +37,8 @@ export default {
   props: {
     set: Object,
     dialog: Boolean,
-    dialogTitle: Number,
-  },
-  
+    dialogTitle: Number
+  }
 };
 </script>
 

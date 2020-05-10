@@ -17,11 +17,7 @@
         </v-row>
       </v-card>
     </div>
-    <v-fab-transition>
-      <v-btn fab x-large dark color="pink" class="button-add" @click.stop="dialog = true">
-        <v-icon>add</v-icon>
-      </v-btn>
-    </v-fab-transition>
+    <v-btn class="button-add" width="100px" @click.stop="dialog = true" color="primary">+ เพิ่ม</v-btn>
 
     <v-dialog v-model="dialog" scrollable width="500">
       <v-card>
@@ -55,7 +51,7 @@
                 <v-spacer></v-spacer>
                 <v-btn color="primary" text @click="submit(0)">เลือกทั้งหมด</v-btn>
                 <v-btn color="primary" text @click="submit(1)">ยืนยัน</v-btn>
-                <v-btn color="primary" text @click="close">ยกเลิก</v-btn>
+                <v-btn color="error" text @click="close">ยกเลิก</v-btn>
               </v-card-actions>
             </v-card>
             <!-- item index == 0 -->
@@ -74,7 +70,7 @@
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="primary" text @click="submit(2)">ยืนยัน</v-btn>
-                <v-btn color="primary" text @click="close">ยกเลิก</v-btn>
+                <v-btn color="error" text @click="close">ยกเลิก</v-btn>
               </v-card-actions>
             </v-card>
             <!-- item index == 1 -->
@@ -89,7 +85,7 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="primary" text @click="submit(3)">ยืนยัน</v-btn>
-            <v-btn color="primary" text @click="close">ยกเลิก</v-btn>
+            <v-btn color="error" text @click="close">ยกเลิก</v-btn>
           </v-card-actions>
         </v-card>
       </v-card>
