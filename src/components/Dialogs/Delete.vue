@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="dialog" width="344">
     <v-card>
-      <v-card-title class="headline grey lighten-2" primary-title>ลบ{{title}}</v-card-title>
+      <v-card-title class="headline grey lighten-2" primary-title>ลบ</v-card-title>
 
       <v-card-text>คุณแน่ใจที่จะลบหรือไม่</v-card-text>
 
@@ -20,8 +20,7 @@
 export default {
   name: "dialog-delete",
   props: {
-    dialog: Boolean,
-    title: String
+    dialog: Boolean
   }
 };
 </script>

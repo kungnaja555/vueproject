@@ -24,6 +24,8 @@
       @submit="submit"
       @close="close"
     />
+
+    <dialog-delete :dialog="dialogDel" @sure="sure" @close="close" />
   </div>
 </template>
 
@@ -32,6 +34,7 @@ import { mapState } from "vuex";
 export default {
   data() {
     return {
+      dialogDel: false,
       dialog: false,
       dialogTitle: 0,
       search: "",
@@ -52,13 +55,18 @@ export default {
       this.dialog = true;
     },
     del(fac) {
-      var id = fac._id;
-      this.$store.dispatch("faculty/deleteFaculty", id);
+      this.form = Object.assign({}, fac);
+      this.dialogDel = true;
+    },
+    sure() {
+      this.$store.dispatch("faculty/deleteFaculty", this.form._id);
+      this.close();
     },
     close() {
       this.dialogTitle = 0;
       this.form = Object.assign({}, this.defaultForm);
       this.dialog = false;
+      this.dialogDel = false;
     },
     submit(form) {
       if (this.dialogTitle == 0) {
