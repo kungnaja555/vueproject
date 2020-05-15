@@ -1,7 +1,6 @@
 <template>
   <div>
     <div style="font-size:25px;">คณะ</div>
-    <v-btn class="button-add" width="100px" @click.stop="dialog = true" color="primary">+ เพิ่ม</v-btn>
     <div v-for="fac in facultys" :key="fac._id">
       <v-card class="mx-auto mt-4" width="40%">
         <v-row>

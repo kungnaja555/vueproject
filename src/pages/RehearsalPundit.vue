@@ -37,7 +37,7 @@
             @page-count="times_pageCount = $event"
           >
             <template v-slot:top>
-              <v-btn style="margin: 10px" @click="gotoTime">นำเข้าเวลา</v-btn>
+              <v-btn color="primary" style="margin: 10px" @click="gotoTime">นำเข้าเวลา</v-btn>
               {{showAvg(timestamps)}}
             </template>
 

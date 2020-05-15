@@ -4,7 +4,8 @@ import api from '../../config/api'
 const faculty = {
     namespaced: true,
     state: {
-        pundits: []
+        pundits: [],
+        havePundit: ''
     },
     mutations: {
         setPundits(state, data) {
@@ -12,6 +13,9 @@ const faculty = {
         }
     },
     getters: {
+        isMatchPundit(state) {
+            return state.havePundit
+        }
     },
     actions: {
         getAllPundit({ commit }, payout) {

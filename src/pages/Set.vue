@@ -27,6 +27,7 @@
       @submit="submit"
       @close="close"
     />
+    <dialog-delete :dialog="dialogDel" @sure="sure" @close="close" />
   </div>
 </template>
 
@@ -35,6 +36,7 @@ import { mapState } from "vuex";
 export default {
   data() {
     return {
+      dialogDel: false,
       set: {
         _id: "",
         con_id: "",
@@ -56,17 +58,22 @@ export default {
       this.dialogTitle = 1;
       var content = set.contents.find(el => el.rehearsal == null);
       this.set._id = set._id;
-      this.set.con_id = content._id
+      this.set.con_id = content._id;
       this.set.name = content.name;
       this.set.years = content.years;
       this.dialog = true;
     },
     del(set) {
+      this.set = Object.assign({}, set);
+      this.dialogDel = true;
+    },
+    sure() {
       var payout = {
         fac_id: this.$route.params.fac_id,
-        set: set
+        set: this.set
       };
       this.$store.dispatch("set/deleteSet", payout);
+      this.close()
     },
     submit(set) {
       var payout = {
@@ -85,6 +92,7 @@ export default {
       this.dialogTitle = 0;
       this.set = Object.assign({}, this.defaultset);
       this.dialog = false;
+      this.dialogDel = false;
     },
     nextPage(set) {
       var fac_id = this.$route.params.fac_id;

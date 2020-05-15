@@ -1,7 +1,6 @@
 <template>
   <div>
     <div style="font-size:25px;">การซ้อม</div>
-    <v-btn class="button-add" width="100px" @click.stop="dialog = true" color="primary">+ เพิ่ม</v-btn>
     <div v-for="rehearsal in rehearsals" :key="rehearsal._id">
       <card-rehearsal :form="rehearsal" @edit="edit" @del="del" />
     </div>
@@ -12,6 +11,8 @@
       @submit="submit"
       @close="close"
     />
+
+    <dialog-delete :dialog="dialogDel" @sure="sure" @close="close" />
   </div>
 </template>
 
@@ -20,6 +21,7 @@ import { mapState } from "vuex";
 export default {
   data() {
     return {
+      dialogDel: false,
       dialog: false,
       dialogTitle: 0,
       form: {
@@ -41,10 +43,15 @@ export default {
       this.dialog = true;
     },
     del(re) {
-      var id = re._id;
-      this.$store.dispatch("rehearsal/deleteRehearsal", id);
+      this.form = Object.assign({}, re);
+      this.dialogDel = true;
+    },
+    sure() {
+      this.$store.dispatch("rehearsal/deleteRehearsal", this.form._id);
+      this.close();
     },
     close() {
+      this.dialogDel = false;
       this.dialogTitle = 0;
       this.form = Object.assign({}, this.defaultform);
       this.dialog = false;

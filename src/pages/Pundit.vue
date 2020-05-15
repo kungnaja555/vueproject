@@ -17,11 +17,11 @@
           <v-toolbar flat color="white">
             <v-text-field v-model="pundits_search" label="ค้นหา" full-width="50%"></v-text-field>
             <v-spacer></v-spacer>
-            <v-btn color="primary" @click.stop="dialog=true">เพิ่มข้อมูล</v-btn>
             <dialog-pundit
               :dialog="dialog"
               :pundit="pundit"
               :dialogTitle="dialogTitle"
+              :pundits="pundits"
               @dataExcel="dataExcel"
               @submit="submit"
               @close="close"
@@ -40,6 +40,8 @@
     <div class="text-center pt-2">
       <v-pagination v-model="pundits_page" :length="pundits_pageCount"></v-pagination>
     </div>
+
+    <dialog-delete :dialog="dialogDel" @sure="sure" @close="close" />
   </div>
 </template>
 
@@ -48,6 +50,7 @@ import { mapState } from "vuex";
 export default {
   data() {
     return {
+      dialogDel: false,
       pundits_page: 1,
       pundits_pageCount: 0,
       pundits_itemsPerPage: 10,
@@ -92,11 +95,16 @@ export default {
       this.dialog = true;
     },
     del(item) {
+      this.pundit = Object.assign({}, item);
+      this.dialogDel = true;
+    },
+    sure() {
       var payout = {
         set_id: this.$route.params.set_id,
-        pundit: item
+        pundit: this.pundit
       };
       this.$store.dispatch("pundit/deletePundit", payout);
+      this.close();
     },
     submit(item) {
       var payout = {
@@ -112,6 +120,7 @@ export default {
       }
     },
     close() {
+      this.dialogDel = false;
       this.dialog = false;
       this.dialogTitle = 0;
       this.pundit = Object.assign({}, this.defaultpundit);
@@ -125,7 +134,9 @@ export default {
         set_id: this.$route.params.set_id,
         data: data
       };
-      if (checkbox) await this.$store.dispatch("pundit/clearPunditBySet", payout);
+      if (checkbox) {
+        await this.$store.dispatch("pundit/clearPunditBySet", payout);
+      }
       this.$store.dispatch("pundit/uploadFile", payout);
       this.close();
     }

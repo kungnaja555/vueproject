@@ -53,6 +53,12 @@
             <v-card color="basil" flat v-if="items.indexOf(item) == 0">
               <v-card-text>
                 <div v-if="sets.length==0">ไม่พบข้อมูล</div>
+                <v-checkbox
+                  v-model="chooseall"
+                  label="เลือกทั้งหมด"
+                  @change="changeValueCheckbox(sets)"
+                  v-if="sets.length > 0"
+                ></v-checkbox>
                 <div v-for="set in sets" :key="set._id">
                   <v-checkbox v-model="form.sets" :label="labelCheckbox(set)" :value="set._id"></v-checkbox>
                 </div>
@@ -101,6 +107,7 @@
         </v-card>
       </v-card>
     </v-dialog>
+    <dialog-delete :dialog="dialogDel" @sure="sure" @close="close" />
   </div>
 </template>
 
@@ -109,7 +116,9 @@ import { mapState } from "vuex";
 export default {
   data() {
     return {
+      dialogDel: false,
       dialog: false,
+      chooseall: false,
       tab: null,
       items: ["เลือกทีมี", "สร้างใหม่"],
       form: {
@@ -147,16 +156,21 @@ export default {
       this.dialog = true;
     },
     del(set) {
+      this.form = Object.assign({}, set);
+      this.dialogDel = true;
+    },
+    sure() {
       var payout = {
         re_id: this.$route.params.re_id,
         fac_id: this.$route.params.fac_id,
-        form: set
+        form: this.form
       };
-      if (set.status == 0) {
+      if (this.form.status == 0) {
         this.$store.dispatch("set/removeContentInSet", payout);
       } else {
         this.$store.dispatch("set/deleteNewContentInSet", payout);
       }
+      this.close();
     },
     submit(status) {
       var payout = {
@@ -181,6 +195,7 @@ export default {
       this.dialogTitle = 0;
       this.form = Object.assign({}, this.defaultform);
       this.dialog = false;
+      this.dialogDel = false;
     },
     nextPage(set) {
       var re_id = this.$route.params.re_id;
@@ -204,6 +219,15 @@ export default {
         return `${rhs.name} - ปีการศึกษา ${rhs.years} / ${fac.name}`;
       } else {
         return `${rhs.name} - ปีการศึกษา ${rhs.years} / ${fac.id} - ${fac.name}`;
+      }
+    },
+    changeValueCheckbox(sets) {
+      if (this.chooseall) {
+        sets.forEach(el => {
+          this.form.sets.push(el._id);
+        });
+      } else {
+        this.form.sets = [];
       }
     }
   },
