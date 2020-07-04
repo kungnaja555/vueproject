@@ -119,7 +119,8 @@ export default {
       content.push({
         text: `${rehearsal.name} - ปีการศึกษา ${rehearsal.years}\n`,
         fontSize: 20,
-        bold: true
+        bold: true,
+        border: [true, false, false, false]
       });
       for (var i = 0; i < names.length; i++) {
         var columns = [];
@@ -145,9 +146,9 @@ export default {
           });
         } else {
           if (names[i].status == 0) {
-            columns.push({ text: `ชุดที่ - ${names[i].name}` });
+            columns.push({ text: ` - ชุดที่ ${names[i].name}` });
           } else {
-            columns.push({ text: `${names[i].name}` });
+            columns.push({ text: ` - ${names[i].name}` });
           }
           var y = set_times.find(el => el._id == names[i]._id);
           columns.push({ text: `${y.time} วินาที / คน`, alignment: "right" });
@@ -161,10 +162,10 @@ export default {
       content.push({
         columns: [
           {
-            text: "รวม",
+            text: "เวลาเฉลี่ยรวม",
             bold: true
           },
-          { 
+          {
             text: this.allTimeAvg(fac_times),
             bold: true,
             alignment: "right"
@@ -187,19 +188,17 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch("faculty/resetReport");
+    this.$store.dispatch("rehearsal/resetReport");
     var payout = {
       re_id: this.$route.params.re_id
     };
     this.$store.dispatch("rehearsal/getRehearsal", payout.re_id);
-    this.$store.dispatch("faculty/report", payout);
-    this.$store.dispatch("faculty/reportName", payout);
+    this.$store.dispatch("rehearsal/report", payout);
+    this.$store.dispatch("rehearsal/reportName", payout);
   },
   computed: {
     ...mapState("rehearsal", {
-      rehearsal: "rehearsal"
-    }),
-    ...mapState("faculty", {
+      rehearsal: "rehearsal",
       names: "names",
       fac_times: "fac_times",
       set_times: "set_times"

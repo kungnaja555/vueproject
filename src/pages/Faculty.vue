@@ -87,7 +87,7 @@ export default {
     ...mapState("faculty", {
       facultys: "facultys"
     })
-  }
+  },
 };
 </script>
 

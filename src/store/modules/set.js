@@ -51,13 +51,6 @@ const faculty = {
                     commit('setMySets', data.data.mysets)
                 })
         },
-        addAllContentInSet({ commit }, payout) {
-            axios.post(api.port + `set/addallcontentinset/${payout.re_id}/${payout.fac_id}`)
-                .then((data) => {
-                    commit('setSets', data.data.sets)
-                    commit('setMySets', data.data.mysets)
-                })
-        },
         addSomeContentInSet({ commit }, payout) {
             axios.post(api.port + `set/addsomecontentinset/${payout.re_id}/${payout.fac_id}`, {
                 form: payout.form

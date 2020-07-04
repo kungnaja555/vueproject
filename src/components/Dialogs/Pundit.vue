@@ -8,10 +8,16 @@
           primary-title
         >{{dialogTitle==0?'เพิ่มข้อมูล':'แก้ไขข้อมูล'}}</v-card-title>
 
-        <v-tabs v-model="tab" background-color="transparent" color="basil" grow>
+        <v-tabs
+          v-model="tab"
+          background-color="transparent"
+          color="basil"
+          grow
+          v-if="dialogTitle==0"
+        >
           <v-tab v-for="item in items" :key="item">{{ item }}</v-tab>
         </v-tabs>
-        <v-tabs-items v-model="tab">
+        <v-tabs-items v-model="tab" v-if="dialogTitle==0">
           <v-tab-item v-for="item in items" :key="item">
             <!-- item index == 0 -->
             <v-card color="basil" flat v-if="items.indexOf(item) == 0">
@@ -81,6 +87,55 @@
             <!-- item index == 1 -->
           </v-tab-item>
         </v-tabs-items>
+        <v-card color="basil" flat v-if="dialogTitle == 1">
+          <v-alert
+            class="mx-auto mt-2"
+            width="95%"
+            :value="alert"
+            outlined
+            dense
+            type="error"
+          >{{textAlert}}</v-alert>
+          <v-card-text>
+            <v-row>
+              <v-col cols="12" sm="6" md="4">
+                <v-text-field v-model="pundit.no" label="ลำดับที่" type="Number"></v-text-field>
+              </v-col>
+              <v-col cols="12" sm="6" md="4">
+                <v-text-field v-model="pundit.id" label="รหัส"></v-text-field>
+              </v-col>
+              <v-col cols="12" sm="6" md="4">
+                <v-select v-model="pundit.title" :items="title" label="คำนำหน้าชื่อ"></v-select>
+              </v-col>
+              <v-col cols="12" sm="6" md="4">
+                <v-text-field v-model="pundit.firstname" label="ชื่อ"></v-text-field>
+              </v-col>
+              <v-col cols="12" sm="6" md="4">
+                <v-text-field v-model="pundit.lastname" label="นามสกุล"></v-text-field>
+              </v-col>
+              <v-col cols="12" sm="6" md="4">
+                <v-select
+                  v-model="pundit.level"
+                  :items="level"
+                  item-text="text"
+                  item-value="value"
+                  label="ระดับปริญญา"
+                ></v-select>
+              </v-col>
+              <v-col cols="12" sm="6" md="4">
+                <v-text-field v-model="pundit.honour" label="เกียรตินิยม(ถ้ามี)"></v-text-field>
+              </v-col>
+            </v-row>
+          </v-card-text>
+
+          <v-divider></v-divider>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" text @click="clickSubmit(pundit)">ยืนยัน</v-btn>
+            <v-btn color="error" text @click="clickCancel">ยกเลิก</v-btn>
+          </v-card-actions>
+        </v-card>
       </v-card>
     </v-dialog>
   </div>
@@ -109,6 +164,30 @@ export default {
   },
   methods: {
     clickSubmit(pundit) {
+      if (this.dialogTitle == 0) {
+        if (this.checkInput(pundit)) {
+          this.alert = true;
+          this.textAlert = "กรุณากรอกข้อมูลให้ครบถ้วน";
+        } else if (this.checkMatchPundit(pundit)) {
+          this.alert = true;
+          this.textAlert = "รหัสนี้มีข้อมูลอยู่ในระบบแล้ว";
+        } else {
+          this.alert = false;
+          this.textAlert = "";
+          this.$emit("submit", pundit);
+        }
+      } else {
+        if (this.checkInput(pundit)) {
+          this.alert = true;
+          this.textAlert = "กรุณากรอกข้อมูลให้ครบถ้วน";
+        } else {
+          this.alert = false;
+          this.textAlert = "";
+          this.$emit("submit", pundit);
+        }
+      }
+    },
+    checkInput(pundit) {
       if (
         pundit.no == "" ||
         pundit.id == "" ||
@@ -116,17 +195,18 @@ export default {
         pundit.firstname == "" ||
         pundit.lastname == "" ||
         pundit.level == ""
-      ) {
-        (this.alert = true), (this.textAlert = "กรุณากรอกข้อมูลให้ครบถ้วน");
-      } else {
-        var x = this.pundits.find(el => el.id == pundit.id);
-        if (x) {
-          this.alert = true;
-          this.textAlert = "มีข้อมูลอยู่ในระบบแล้ว";
-        } else {
-          this.$emit("submit", pundit);
-        }
-      }
+      )
+        return true;
+      return false;
+    },
+    checkMatchPundit(pundit) {
+      var id = this.pundits.find(el => el.id == pundit.id);
+      var no = this.pundits.find(el => el.no == pundit.no);
+      var firstname = this.pundits.find(el => el.firstname == pundit.firstname);
+      var lastname = this.pundits.find(el => el.lastname == pundit.lastname);
+
+      if (id || no || (firstname && lastname)) return true;
+      return false;
     },
     clickCancel() {
       this.alert = false;

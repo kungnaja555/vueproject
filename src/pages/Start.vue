@@ -1,53 +1,43 @@
 <template>
   <div>
-    <v-card class="mx-auto" width="70%">
-      <v-stepper v-model="state">
-        <v-stepper-header>
-          <v-stepper-step :complete="state > 0" step="1">Name of step 1</v-stepper-step>
+    <div style="font-size:25px;">จับเวลา</div>
+    <v-card class="mx-auto" width="70%" v-if="state==0">
+      <v-container>
+        <v-card class="mb-4" color="grey lighten-1" height="700px"></v-card>
 
-          <v-divider></v-divider>
-
-          <v-stepper-step :complete="state > 1" step="2">Name of step 2</v-stepper-step>
-
-          <v-divider></v-divider>
-
-          <v-stepper-step :complete="state > 3" step="3">Name of step 3</v-stepper-step>
-        </v-stepper-header>
-
-        <v-stepper-items>
-          <v-stepper-content step="0">
-            <v-card class="mb-12" color="grey lighten-1" height="470px"></v-card>
-
-            <v-btn color="primary" @click="setState(1)">เริ่ม</v-btn>
-          </v-stepper-content>
-
-          <v-stepper-content step="1">
-            <div>
-              <img :src="path" width="100%" id="img" @click="createSquare" @mousemove="mouseMove" />
-              <div :style="element"></div>
-            </div>
-
-            <v-btn color="primary" @click="setState(2)">กำหนดจุด</v-btn>
-          </v-stepper-content>
-
-          <v-stepper-content step="2">
-            <v-card class="mb-12" color="grey lighten-1" height="470px"></v-card>
-
-            <v-btn color="primary" @click="setState(3)">เล่น</v-btn>
-          </v-stepper-content>
-          <v-stepper-content step="3">
-            <img :src="img" width="100%" />
-            <div>เวลาเฉลี่ย 10 คนได้ {{avg}} วินาที</div>
-          </v-stepper-content>
-        </v-stepper-items>
-      </v-stepper>
+        <v-btn color="primary" @click="setState(1)">เริ่ม</v-btn>
+      </v-container>
+    </v-card>
+    <v-card class="mx-auto" width="70%" v-if="state==1">
+      <v-container>
+        <img
+          v-show="true"
+          :src="url"
+          width="100%"
+          id="img"
+          @click="createSquare"
+          @mousemove="mouseMove"
+        />
+        <div :style="element"></div>
+        <v-btn color="primary" @click="setState(2)">กำหนดกรอบ</v-btn>
+      </v-container>
+    </v-card>
+    <v-card class="mx-auto" width="70%" v-if="state==2">
+      <v-container>
+        <v-card class="mb-4" color="grey lighten-1" height="700px"></v-card>
+        <v-btn color="primary" @click="setState(3)">เล่น</v-btn>
+      </v-container>
+    </v-card>
+    <v-card class="mx-auto" width="70%" v-if="state==3">
+      <v-container>
+        <img :src="img" width="100%" />
+      </v-container>
     </v-card>
   </div>
 </template>
 
 <script>
 import { mapState } from "vuex";
-import api from "../config/api";
 export default {
   data() {
     return {
@@ -73,7 +63,6 @@ export default {
         w: 0,
         h: 0
       },
-      path: api.port + "image/background.jpg",
       count: 0,
       intervalStatus: ""
     };
@@ -89,8 +78,8 @@ export default {
       } else {
         this.resetElement();
         this.status = true;
-        this.mouse.startX = ev.offsetX + 24;
-        this.mouse.startY = ev.offsetY + 24;
+        this.mouse.startX = ev.offsetX;
+        this.mouse.startY = ev.offsetY;
         this.element.border = "2px solid #ff0000";
         this.element.position = "absolute";
         img.style.cursor = "crosshair";
@@ -132,42 +121,40 @@ export default {
         parseFloat(this.mouse.y) * (img.naturalWidth / img.width);
       this.rectangle = true;
     },
-    setState(state) {
+    async setState(state) {
       var payout = {
         state: state,
         position: this.position
       };
-      if (state == 0) {
-        this.path = api.port + "image/background.jpg";
+      if (state == 1) {
         this.$store.dispatch("redis/setState", payout);
+        setTimeout(() => {
+          this.$store.dispatch("redis/setUrl");
+        }, 3000);
       } else if (state == 2) {
         if (this.rectangle == true) {
           this.$store.dispatch("redis/setState", payout);
         }
-      } else if (state == 3) {
-        setTimeout(() => {
-          this.$store.dispatch("redis/setState", payout);
-        }, 3000);
       } else {
         setTimeout(() => {
           this.$store.dispatch("redis/setState", payout);
-        }, 1000);
+        }, 3000);
       }
     }
   },
   created() {
     clearInterval(this.intervalStatus);
     this.$store.dispatch("redis/getState");
+    this.$store.dispatch("redis/getUrl");
     this.intervalStatus = setInterval(() => {
       this.$store.dispatch("redis/getCount");
     }, 100);
-    this.$store.dispatch("redis/getAvg");
   },
   computed: {
     ...mapState("redis", {
       state: "state",
       img: "img",
-      avg: "avg"
+      url: "url"
     })
   }
 };

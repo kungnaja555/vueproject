@@ -6,7 +6,7 @@ const redis = {
     state: {
         state: null,
         img: null,
-        avg: 0
+        url: null
     },
     mutations: {
         setState(state, data) {
@@ -15,11 +15,14 @@ const redis = {
         setImage(state, data) {
             state.img = api.port + "image/img" + data + ".jpg"
         },
-        setAvg(state, data) {
-            state.avg = data
+        setUrl(state, data) {
+            state.url = data
         }
     },
     getters: {
+        state(state) {
+            return state.state
+        }
     },
     actions: {
         getState({ commit }) {
@@ -40,12 +43,15 @@ const redis = {
                 .then((data) => commit('setImage', data.data))
 
         },
-        getAvg({ commit }) {
-            setInterval(() => {
-                axios.get(api.port + 'redis/getavg')
-                    .then((data) => commit('setAvg', data.data))
-            }, 1000);
-        }
+        setUrl({ commit }) {
+            axios.post(api.port + 'redis/seturl', {
+                url: api.port + "image/background.jpg"
+            }).then((data) => commit('setUrl', data.data))
+        },
+        getUrl({ commit }) {
+            axios.get(api.port + 'redis/geturl')
+                .then((data) => commit('setUrl', data.data))
+        },
     }
 }
 

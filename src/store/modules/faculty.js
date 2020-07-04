@@ -7,9 +7,6 @@ const faculty = {
         facultys: [],
         faculty: '',
         myfacultys: [],
-        fac_times: [],
-        set_times: [],
-        names: []
     },
     mutations: {
         setFacultys(state, data) {
@@ -21,13 +18,6 @@ const faculty = {
         setMyFacultys(state, data) {
             state.myfacultys = data
         },
-        setReport(state, data) {
-            state.fac_times = data.fac_times
-            state.set_times = data.set_times
-        },
-        setReportName(state, data) {
-            state.names = data
-        }
     },
     getters: {
     },
@@ -72,15 +62,6 @@ const faculty = {
                     commit('setMyFacultys', data.data.myfacultys)
                 })
         },
-        updateAllAttrRehearsal({ commit }, payout) {
-            axios.post(api.port + 'faculty/updateallattrrehearsal/' + payout.re_id, {
-                form: payout.form
-            })
-                .then((data) => {
-                    commit('setFacultys', data.data.facultys)
-                    commit('setMyFacultys', data.data.myfacultys)
-                })
-        },
         removeRehearsalInFaculty({ commit }, payout) {
             axios.get(api.port + `faculty/removerehearsalinfaculty/${payout.re_id}/${payout.form._id}`)
                 .then((data) => {
@@ -111,26 +92,7 @@ const faculty = {
                 commit('setMyFacultys', data.data.myfacultys)
             })
         },
-        report({ commit }, payout) {
-            axios.get(api.port + `faculty/report/${payout.re_id}`)
-                .then((data) => {
-                    commit('setReport', data.data)
-                })
-        },
-        reportName({ commit }, payout) {
-            axios.get(api.port + `faculty/reportname/${payout.re_id}`)
-                .then((data) => {
-                    commit('setReportName', data.data)
-                })
-        },
-        resetReport({ commit }) {
-            var data = {
-                fac_times: [],
-                set_times: [],
-            }
-            commit('setReport', data)
-            commit('setReportName', [])
-        }
+        
     }
 }
 

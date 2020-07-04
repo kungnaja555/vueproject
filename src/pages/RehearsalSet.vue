@@ -26,6 +26,14 @@
         >{{dialogTitle==0?'เพิ่มข้อมูล':'แก้ไขข้อมูล'}}</v-card-title>
 
         <v-card color="basil" flat v-if="dialogTitle==0 && factype == 2">
+          <v-alert
+            class="mx-auto mt-2"
+            width="90%"
+            :value="alert"
+            outlined
+            dense
+            type="error"
+          >{{textAlert}}</v-alert>
           <v-card-text>
             <v-text-field class="mt-4 mx-auto" style="width:80%" v-model="form.name" label="ชื่อ"></v-text-field>
           </v-card-text>
@@ -66,7 +74,6 @@
               <v-divider></v-divider>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="primary" text @click="submit(0)">เลือกทั้งหมด</v-btn>
                 <v-btn color="primary" text @click="submit(1)">ยืนยัน</v-btn>
                 <v-btn color="error" text @click="close">ยกเลิก</v-btn>
               </v-card-actions>
@@ -75,6 +82,14 @@
 
             <!-- item index == 1 -->
             <v-card color="basil" flat v-if="items.indexOf(item) == 1">
+              <v-alert
+                class="mx-auto mt-2"
+                width="90%"
+                :value="alert"
+                outlined
+                dense
+                type="error"
+              >{{textAlert}}</v-alert>
               <v-card-text>
                 <v-text-field
                   class="mt-4 mx-auto"
@@ -95,6 +110,14 @@
         </v-tabs-items>
 
         <v-card color="basil" flat v-if="dialogTitle==1">
+          <v-alert
+            class="mx-auto mt-2"
+            width="90%"
+            :value="alert"
+            outlined
+            dense
+            type="error"
+          >{{textAlert}}</v-alert>
           <v-card-text>
             <v-text-field class="mt-4 mx-auto" style="width:80%" v-model="editname" label="ชื่อ"></v-text-field>
           </v-card-text>
@@ -116,6 +139,8 @@ import { mapState } from "vuex";
 export default {
   data() {
     return {
+      alert: false,
+      textAlert: "",
       dialogDel: false,
       dialog: false,
       chooseall: false,
@@ -179,16 +204,26 @@ export default {
         form: this.form,
         editname: this.editname
       };
-      if (status == 0) {
-        this.$store.dispatch("set/addAllContentInSet", payout);
-      } else if (status == 1) {
+      if (status == 1) {
         this.$store.dispatch("set/addSomeContentInSet", payout);
+        this.close();
       } else if (status == 2) {
-        this.$store.dispatch("set/addNewContentInSet", payout);
+        if (this.form.name == "") {
+          this.alert = true;
+          this.textAlert = "กรุณากรอกข้อมูลให้ครบถ้วน";
+        } else {
+          this.$store.dispatch("set/addNewContentInSet", payout);
+          this.close();
+        }
       } else {
-        this.$store.dispatch("set/editNewContentInSet", payout);
+        if (this.editname == "") {
+          this.alert = true;
+          this.textAlert = "กรุณากรอกข้อมูลให้ครบถ้วน";
+        } else {
+          this.$store.dispatch("set/editNewContentInSet", payout);
+          this.close();
+        }
       }
-      this.close();
     },
     close() {
       this.tab = null;

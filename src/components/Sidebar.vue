@@ -24,13 +24,12 @@ export default {
       items: [
         { title: "การซ้อม", icon: "directions_walk", name: "rehearsal" },
         { title: "คณะ", icon: "business", name: "faculty" },
-        // { title: "เวลา", icon: "access_time", name: "time" },
         { title: "จับเวลา", icon: "access_alarm", name: "start" }
       ]
     };
   },
   methods: {
-    setRoute(route) {
+    async setRoute(route) {
       if (this.$route.name != route) {
         this.$router.push({ name: route });
       }

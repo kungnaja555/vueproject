@@ -1,5 +1,6 @@
 <template>
   <div>
+    <v-btn class="button-add" width="100px" @click.stop="dialog = true" color="primary">+ เพิ่ม</v-btn>
     <v-dialog v-model="dialog" width="344">
       <v-card>
         <v-card-title

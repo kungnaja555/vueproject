@@ -40,6 +40,8 @@ export default {
     edit(re) {
       this.dialogTitle = 1;
       this.form = Object.assign({}, re);
+      this.form.date = new Date(this.form.date).toISOString().substr(0, 10)
+
       this.dialog = true;
     },
     del(re) {

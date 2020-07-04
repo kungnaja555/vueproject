@@ -3,9 +3,7 @@
     <router-link
       :to="`/rehearsalpundit/${this.$route.params.re_id}/${this.$route.params.fac_id}/${this.$route.params.set_id}`"
     >ย้อนกลับ</router-link>
-    <div
-      style="font-size: 25px"
-    >{{rehearsal.name}} - ปีการศึกษา {{rehearsal.years}} / {{faculty.id}} - {{faculty.name}} / ชุดที่ {{set.no}}</div>
+    <div style="font-size: 25px">{{showCurrentPlace(rehearsal,faculty,set)}}</div>
     <v-row>
       <v-col cols="6"></v-col>
       <v-col>
@@ -22,7 +20,14 @@
         <v-dialog v-model="dialog" width="344">
           <v-card>
             <v-card-title class="headline grey lighten-2" primary-title>นำเข้าเวลา</v-card-title>
-
+            <v-alert
+              class="mx-auto mt-2"
+              width="90%"
+              :value="alert"
+              outlined
+              dense
+              type="error"
+            >{{textAlert}}</v-alert>
             <v-card-text>
               <v-text-field v-model="position.start" label="ตำแหน่งเริ่มต้น" type="Number"></v-text-field>
             </v-card-text>
@@ -34,7 +39,7 @@
 
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="primary" text @click="importTimeMany">ยืนยัน</v-btn>
+              <v-btn color="primary" text @click="importTimeMany(timestamps.length)">ยืนยัน</v-btn>
               <v-btn color="error" text @click="close">ยกเลิก</v-btn>
             </v-card-actions>
           </v-card>
@@ -104,6 +109,8 @@ export default {
       page: 1,
       pageCount: 0,
       itemsPerPage: 30,
+      alert: false,
+      textAlert: "",
       dialog: false,
       dialogClear: false,
       datetime: {
@@ -138,6 +145,7 @@ export default {
       set_id: this.$route.params.set_id
     };
     this.$store.dispatch("rehearsal/getRehearsal", payout.re_id);
+    this.$store.dispatch("faculty/getFaculty", payout.fac_id);
     this.$store.dispatch("set/getSet", payout);
 
     this.getTimestamps(0, 0, 0);
@@ -160,8 +168,10 @@ export default {
     clickSearch() {
       var start = this.datetime.start;
       var end = this.datetime.end;
-      this.getTimestamps(1, start, end);
-      this.close();
+      if (start != "" && end != "") {
+        this.getTimestamps(1, start, end);
+        this.close();
+      }
     },
     getTimestamps(status, start, end) {
       var payout = {
@@ -174,15 +184,29 @@ export default {
         this.$store.dispatch("time/searchTime", payout);
       }
     },
-    importTimeMany() {
+    importTimeMany(length) {
       var payout = {
         position: this.position,
         set_id: this.$route.params.set_id,
         re_id: this.$route.params.re_id
       };
-      this.$store.dispatch("time/setTimeGroup", payout);
-      this.getTimestamps(0, 0, 0);
-      this.close();
+      if (this.position.start == "" || this.position.end == "") {
+        this.alert = true;
+        this.textAlert = "กรุณากรอกข้อมูลให้ครบถ้วน";
+      } else if (this.position.start <= 0) {
+        this.alert = true;
+        this.textAlert = "ตำแหน่งเริ่มต้นต้องมากกว่า 0";
+      } else if (this.position.end > length) {
+        this.alert = true;
+        this.textAlert = "ข้อมูลมีไม่เพียงพอ";
+      } else if (this.position.start > this.position.end) {
+        this.alert = true;
+        this.textAlert = "ตำแหน่งเริ่มต้นต้องน้อยกว่าตำแหน่งสิ้นสุด";
+      }else {
+        this.$store.dispatch("time/setTimeGroup", payout);
+        this.getTimestamps(0, 0, 0);
+        this.close();
+      }
     },
     importTimeOne(item) {
       var payout = {
@@ -199,10 +223,25 @@ export default {
       this.datetime = Object.assign({}, this.defaultdatetime);
       this.position = Object.assign({}, this.defaultposition);
       this.dialog = false;
+      this.alert = false;
+      this.textAlert = "";
     },
     clearTime() {
       this.dialogClear = false;
       this.$store.dispatch("time/clearTimeAll");
+    },
+    showCurrentPlace(rhs, fac, set) {
+      var re_id = this.$route.params.re_id;
+      var content = set.contents.find(el => el.rehearsal == re_id);
+      if (fac.type == 2) {
+        if (set.status == 0)
+          return `${rhs.name} - ปีการศึกษา ${rhs.years} /${fac.name} / ชุดที่ ${content.name}`;
+        return `${rhs.name} - ปีการศึกษา ${rhs.years} / ${fac.name} / ${content.name}`;
+      } else {
+        if (set.status == 0)
+          return `${rhs.name} - ปีการศึกษา ${rhs.years} / ${fac.id} - ${fac.name} / ชุดที่ ${content.name}`;
+        return `${rhs.name} - ปีการศึกษา ${rhs.years} / ${fac.id} - ${fac.name} / ${content.name}`;
+      }
     }
   }
 };

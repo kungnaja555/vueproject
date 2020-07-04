@@ -6,7 +6,10 @@ const rehearsal = {
     state: {
         rehearsals: [],
         years: null,
-        rehearsal: ''
+        rehearsal: '',
+        fac_times: [],
+        set_times: [],
+        names: []
     },
     mutations: {
         setRehearsals(state, data) {
@@ -18,6 +21,13 @@ const rehearsal = {
         setRehearsal(state, data) {
             state.rehearsal = data
         },
+        setReport(state, data) {
+            state.fac_times = data.fac_times
+            state.set_times = data.set_times
+        },
+        setReportName(state, data) {
+            state.names = data
+        }
     },
     getters: {
     },
@@ -48,7 +58,26 @@ const rehearsal = {
             axios.get(api.port + 'rehearsal/getrehearsal/' + payout)
                 .then((data) => commit('setRehearsal', data.data))
         },
-
+        report({ commit }, payout) {
+            axios.get(api.port + `rehearsal/report/${payout.re_id}`)
+                .then((data) => {
+                    commit('setReport', data.data)
+                })
+        },
+        reportName({ commit }, payout) {
+            axios.get(api.port + `rehearsal/reportname/${payout.re_id}`)
+                .then((data) => {
+                    commit('setReportName', data.data)
+                })
+        },
+        resetReport({ commit }) {
+            var data = {
+                fac_times: [],
+                set_times: [],
+            }
+            commit('setReport', data)
+            commit('setReportName', [])
+        }
     }
 
 }

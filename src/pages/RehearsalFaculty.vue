@@ -19,7 +19,7 @@
     </div>
     <v-btn class="button-add" width="100px" @click.stop="dialog = true" color="primary">+ เพิ่ม</v-btn>
 
-    <v-dialog v-model="dialog" scrollable width="500">
+    <v-dialog v-model="dialog" width="500">
       <v-card>
         <v-card-title
           class="headline grey lighten-2"
@@ -40,7 +40,7 @@
           <v-tab-item v-for="item in items" :key="item">
             <!-- item index == 0 -->
             <v-card color="basil" flat v-if="items.indexOf(item) == 0">
-              <v-card-text style="height: 300px;">
+              <v-card-text>
                 <div v-if="facultys.length==0">ไม่พบข้อมูล</div>
                 <v-checkbox
                   v-model="chooseall"
@@ -132,7 +132,7 @@ export default {
         name: "",
         facultys: []
       },
-      dialogTitle: 0
+      dialogTitle: 0,
     };
   },
   computed: {
