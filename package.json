@@ -10,9 +10,9 @@
   "dependencies": {
     "axios": "^0.19.2",
     "core-js": "^3.6.4",
-    "jspdf": "^1.5.3",
+    "jspdf": "^2.5.1",
     "pdfmake": "^0.1.65",
-    "read-excel-file": "^4.0.6",
+    "read-excel-file": "^5.5.3",
     "vue": "^2.6.11",
     "vue-axios": "^2.1.5",
     "vue-router": "^3.1.5",
